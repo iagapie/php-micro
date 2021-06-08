@@ -62,8 +62,10 @@ final class ErrorMiddleware implements MiddlewareInterface
             $this->logger->error('Error Middleware handle exception', ['exception' => $exception]);
         }
 
-        /** @var Throwable $exception */
-        $exception = $this->eventDispatcher->dispatch(new ErrorEvent($exception), ErrorEvent::NAME);
+        /** @var ErrorEvent $event */
+        $event = $this->eventDispatcher->dispatch(new ErrorEvent($exception), ErrorEvent::NAME);
+
+        $exception = $event->getException();
 
         if (!$exception instanceof HttpException) {
             $exception = new HttpTeapotException(previous: $exception);
