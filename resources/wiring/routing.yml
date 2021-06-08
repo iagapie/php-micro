@@ -1,0 +1,36 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: true
+
+  FastRoute\RouteParser:
+    class: FastRoute\RouteParser\Std
+
+  FastRoute\DataGenerator:
+    class: FastRoute\DataGenerator\GroupCountBased
+
+  route_collector:
+    class: IA\Route\Collector\RouteCollector
+
+  IA\Route\Collector\RouteCollectorInterface:
+    alias: route_collector
+
+  FastRoute\RouteCollector:
+    alias: route_collector
+
+  route_resolver:
+    class: IA\Route\Resolver\RouteResolver
+    arguments:
+      $debug: '%kernel.debug%'
+      $cacheDir: '%kernel.cache_dir%'
+      $handlerDirs: '%kernel.controller_dirs%'
+
+  IA\Route\Resolver\RouteResolverInterface:
+    alias: route_resolver
+
+  route_url_generator:
+    class: IA\Route\Generator\UrlGenerator
+
+  IA\Route\Generator\UrlGeneratorInterface:
+    alias: route_url_generator

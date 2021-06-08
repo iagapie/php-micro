@@ -1,0 +1,13 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: true
+
+  Symfony\Component\Console\Application:
+    arguments:
+      $name: '%kernel.name%'
+      $version: '%kernel.version%'
+    calls:
+      - [ setDispatcher, [ '@event_dispatcher' ] ]
+      - [ setCommandLoader, [ '@console.command_loader' ] ]

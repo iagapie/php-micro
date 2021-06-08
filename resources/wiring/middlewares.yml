@@ -1,0 +1,35 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: true
+
+  IA\Micro\Middleware\Rfc2616Sec94Middleware:
+    tags:
+      - { name: 'app.middleware', priority: 10 }
+
+  IA\Micro\Middleware\ContentLengthMiddleware:
+    tags:
+      - { name: 'app.middleware', priority: 20 }
+
+  IA\Micro\Middleware\JsonContentTypeMiddleware:
+    tags:
+      - { name: 'app.middleware', priority: 30 }
+
+  IA\Micro\Middleware\ErrorMiddleware:
+    arguments:
+      $debug: '%kernel.debug%'
+    tags:
+      - { name: 'app.middleware', priority: 40 }
+
+  IA\Micro\Middleware\BodyParsingMiddleware:
+    tags:
+      - { name: 'app.middleware', priority: 50 }
+
+  IA\Route\RouteMiddleware:
+    tags:
+      - { name: 'app.middleware', priority: 100 }
+
+  IA\Micro\Middleware\RouteMiddleware:
+    tags:
+      - { name: 'app.middleware', priority: 110 }

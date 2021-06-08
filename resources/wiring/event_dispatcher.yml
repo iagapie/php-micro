@@ -1,0 +1,19 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: true
+
+  event_dispatcher:
+    class: Symfony\Component\EventDispatcher\EventDispatcher
+    tags:
+      - { name: 'event_dispatcher.dispatcher' }
+
+  Symfony\Component\EventDispatcher\EventDispatcherInterface:
+    alias: event_dispatcher
+
+  Symfony\Contracts\EventDispatcher\EventDispatcherInterface:
+    alias: event_dispatcher
+
+  Psr\EventDispatcher\EventDispatcherInterface:
+    alias: event_dispatcher

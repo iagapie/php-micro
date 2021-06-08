@@ -1,0 +1,42 @@
+{
+  "name": "iagapie/php-micro",
+  "type": "library",
+  "description": "PHP Micro",
+  "keywords": [
+    "php"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Igor Agapie",
+      "email": "igoragapie@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">= 8.0",
+    "iagapie/fast-route-attribute": "^1.0",
+    "laminas/laminas-httphandlerrunner": "^1.4",
+    "nyholm/psr7": "^1.4",
+    "nyholm/psr7-server": "^1.0",
+    "psr/log": "^1.1",
+    "symfony/config": "^5.3",
+    "symfony/console": "^5.3",
+    "symfony/dependency-injection": "^5.3",
+    "symfony/dotenv": "^5.3",
+    "symfony/event-dispatcher": "^5.3",
+    "symfony/finder": "^5.3",
+    "symfony/yaml": "^5.3"
+  },
+  "config": {
+    "optimize-autoloader": true,
+    "preferred-install": {
+      "*": "dist"
+    },
+    "sort-packages": true
+  },
+  "autoload": {
+    "psr-4": {
+      "IA\\Micro\\": "src/"
+    }
+  }
+}

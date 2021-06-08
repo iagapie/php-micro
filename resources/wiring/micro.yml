@@ -1,0 +1,47 @@
+services:
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    public: true
+
+  Symfony\Component\Stopwatch\Stopwatch:
+    arguments:
+      $morePrecision: true
+
+  Laminas\HttpHandlerRunner\Emitter\EmitterInterface:
+    class: Laminas\HttpHandlerRunner\Emitter\SapiStreamEmitter
+
+  Nyholm\Psr7Server\ServerRequestCreatorInterface:
+    class: Nyholm\Psr7Server\ServerRequestCreator
+
+  psr17_factory:
+    class: Nyholm\Psr7\Factory\Psr17Factory
+
+  Psr\Http\Message\RequestFactoryInterface:
+    alias: psr17_factory
+
+  Psr\Http\Message\ResponseFactoryInterface:
+    alias: psr17_factory
+
+  Psr\Http\Message\ServerRequestFactoryInterface:
+    alias: psr17_factory
+
+  Psr\Http\Message\StreamFactoryInterface:
+    alias: psr17_factory
+
+  Psr\Http\Message\UploadedFileFactoryInterface:
+    alias: psr17_factory
+
+  Psr\Http\Message\UriFactoryInterface:
+    alias: psr17_factory
+
+  default_handler:
+    class: IA\Micro\RequestHandler\ControllerMiddlewareChainHandler
+
+  IA\Micro\RequestHandler\MiddlewareChainHandler:
+    arguments:
+      $defaultHandler: '@default_handler'
+      $middlewares: !tagged_iterator app.middleware
+
+  Psr\Http\Server\RequestHandlerInterface:
+    alias: IA\Micro\RequestHandler\MiddlewareChainHandler
