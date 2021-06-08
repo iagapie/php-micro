@@ -61,7 +61,7 @@ use function str_starts_with;
 use function trim;
 use function ucfirst;
 
-class Kernel
+abstract class Kernel
 {
     /**
      * @var ContainerInterface
@@ -98,8 +98,8 @@ class Kernel
         $this->version = $_SERVER['APP_VERSION'] ?? '1.0.0';
 
         foreach ([$this->getCacheDir(), $this->getLogsDir()] as $dir) {
-            self::mkdir($dir);
-            self::isWritable($dir);
+            static::mkdir($dir);
+            static::isWritable($dir);
         }
     }
 
@@ -166,7 +166,7 @@ class Kernel
      */
     public static function getComposerDir(): string
     {
-        $r = new ReflectionClass(self::class);
+        $r = new ReflectionClass(static::class);
 
         if (!is_file($dir = $r->getFileName())) {
             throw new LogicException(
@@ -280,15 +280,19 @@ class Kernel
      */
     public static function run(bool $console = false): void
     {
+        if (self::class === static::class) {
+            throw new RuntimeException('Kernel should be extended.');
+        }
+
         if ($console) {
             $input = new ArgvInput();
 
             if (null !== $env = $input->getParameterOption(['--env', '-e'], null, true)) {
-                putenv('APP_ENV=' . $_SERVER['APP_ENV'] = $_ENV['APP_ENV'] = $env);
+                putenv('APP_ENV='.$_SERVER['APP_ENV'] = $_ENV['APP_ENV'] = $env);
             }
 
             if ($input->hasParameterOption('--no-debug', true)) {
-                putenv('APP_DEBUG=' . $_SERVER['APP_DEBUG'] = $_ENV['APP_DEBUG'] = '0');
+                putenv('APP_DEBUG='.$_SERVER['APP_DEBUG'] = $_ENV['APP_DEBUG'] = '0');
             }
 
             $run = fn(self $kernel) => $kernel->runConsole($input);
@@ -297,9 +301,9 @@ class Kernel
         }
 
         try {
-            $projectDir = self::getComposerDir();
-            (new Dotenv())->bootEnv($projectDir . '/.env');
-            $status = $run(new self($projectDir, $_SERVER['APP_ENV'] ?? 'dev', (bool)($_SERVER['APP_DEBUG'] ?? 0)));
+            $projectDir = static::getComposerDir();
+            (new Dotenv())->bootEnv($projectDir.'/.env');
+            $status = $run(new static($projectDir, $_SERVER['APP_ENV'] ?? 'dev', (bool)($_SERVER['APP_DEBUG'] ?? 0)));
         } catch (Throwable $e) {
             error_log(sprintf("\033[31m%s\033[0m", $e->getMessage()));
             $status = 1;
@@ -409,7 +413,7 @@ class Kernel
         $container = new ContainerBuilder();
         $container->getParameterBag()->add($this->getParameters());
 
-        self::registerSynthetic($container, 'kernel', $this::class);
+        static::registerSynthetic($container, 'kernel', $this::class);
 
         // ensure these extensions are implicitly loaded
         $container->getCompilerPassConfig()->setMergePass(new MergeExtensionConfigurationPass());
@@ -418,7 +422,7 @@ class Kernel
             $container->addCompilerPass(new $compilerPass(), $type, $priority);
         }
 
-        $loader = self::getContainerLoader($container);
+        $loader = static::getContainerLoader($container);
 
         if (is_dir($this->getMicroWiringDir())) {
             $this->loadServices($loader, $this->getMicroWiringDir());
